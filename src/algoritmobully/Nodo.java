@@ -37,7 +37,7 @@ public class Nodo implements Runnable {
     /**
      * Banderas
      */
-    public boolean estado, eleccionEnCurso;
+    public boolean estado;
 
     public Nodo(int PID, int puerto) {
         this.PID = PID;
@@ -45,11 +45,51 @@ public class Nodo implements Runnable {
         this.listaNodos = new ArrayList<>();
         this.coordinadorID = -1;
         this.estado = true;
-        this.eleccionEnCurso = false;
     }
-    
+
+    public int getPID() {
+        return PID;
+    }
+
+    public int getCoordinadorID() {
+        return coordinadorID;
+    }
+
+    public void setCoordinadorId(int coordinadorID) {
+        this.coordinadorID = coordinadorID;
+    }
+
+    public void setEstado(boolean estado) {
+        this.estado = estado;
+    }
+
+    public boolean isEstado() {
+        return estado;
+    }
+
+    public String getHost() {
+        return host;
+    }
+
+    public void setHost(String host) {
+        this.host = host;
+    }
+
+    public void setPuerto(int puerto) {
+        this.puerto = puerto;
+    }
+
+    public int getPuerto() {
+        return puerto;
+    }
+
+    public ArrayList<Nodo> getListaNodos() {
+        return listaNodos;
+    }
+
     /**
      * Obtiene el máximo PID de todos los nodos
+     *
      * @param nodosVecinos
      * @return máximo PID de la lista de nodos
      */
@@ -74,7 +114,9 @@ public class Nodo implements Runnable {
      * @param nodosVecinos Lista de nodos vecinos
      */
     public void iniciarEleccion(ArrayList<Nodo> nodosVecinos) {
+        long inicio = System.currentTimeMillis();
 
+        
         this.listaNodos = nodosVecinos;
 
         for (Nodo nodo : listaNodos) {
@@ -88,6 +130,9 @@ public class Nodo implements Runnable {
             }
 
         }
+        
+        long fin = System.currentTimeMillis();
+        System.out.println("Tiempo de eleccion: " + (fin - inicio) + " ms");
     }
 
     /**
@@ -101,62 +146,14 @@ public class Nodo implements Runnable {
     }
 
     /**
-     * Anuncia al nuevo coordinador
+     * Envía el mensaje del nuevo coordinador a los demás nodos
      */
     public void anunciarNuevoCoordinador() {
         for (Nodo vecino : listaNodos) {
             if (vecino.getPID() != PID && vecino.isEstado()) {
-                enviaMensaje(vecino, "PID: "  + this.PID + ", port: " + this.puerto + ": SOY EL NUEVO COORDINADOR");
+                enviaMensaje(vecino, "PID: " + this.PID + ", port: " + this.puerto + ": SOY EL NUEVO COORDINADOR");
             }
         }
-    }
-
-    public int getPID() {
-        return PID;
-    }
-
-    public int getCoordinadorID() {
-        return coordinadorID;
-    }
-
-    public boolean isEstado() {
-        return estado;
-    }
-
-    public void setEleccionEnCurso(boolean eleccionEnCurso) {
-        this.eleccionEnCurso = eleccionEnCurso;
-    }
-
-    public void setCoordinadorId(int coordinadorID) {
-        this.coordinadorID = coordinadorID;
-    }
-
-    public void setEstado(boolean estado) {
-        this.estado = estado;
-    }
-
-    public String getHost() {
-        return host;
-    }
-
-    public void setHost(String host) {
-        this.host = host;
-    }
-
-    public void setCoordinadorID(int coordinadorID) {
-        this.coordinadorID = coordinadorID;
-    }
-
-    public void setPuerto(int puerto) {
-        this.puerto = puerto;
-    }
-
-    public int getPuerto() {
-        return puerto;
-    }
-
-    public ArrayList<Nodo> getListaNodos() {
-        return listaNodos;
     }
 
     /**
@@ -180,6 +177,10 @@ public class Nodo implements Runnable {
         }
     }
 
+    
+    /**
+     * Método run del hilo que inicializa un servidor socket
+     */
     @Override
     public void run() {
         try {

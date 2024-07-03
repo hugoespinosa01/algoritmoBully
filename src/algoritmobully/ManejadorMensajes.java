@@ -5,13 +5,17 @@ import java.io.IOException;
 import java.net.Socket;
 
 /**
- *
  * @author Hugo Espinosa
  */
 public class ManejadorMensajes implements Runnable {
-
-    private Socket socket;
-    private Nodo nodo;
+    /**
+     * Objeto socket del nodo receptor
+     */
+    private final Socket socket;
+    /**
+     * Nodo receptor
+     */
+    private final Nodo nodo;
 
     public ManejadorMensajes(Socket socket, Nodo nodo) {
         this.socket = socket;
